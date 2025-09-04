@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEE MOVIES</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <style>
+    /* بک‌گراند رویایی متحرک */
+    body {
+      background: linear-gradient(270deg, #ff6ec7, #ffd86e, #6ee1ff, #ff6edb);
+      background-size: 800% 800%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    /* کارت‌ها با بک‌گراند عکس */
+    .movie-card {
+      animation: slideFadeIn 0.8s ease forwards;
+      opacity: 0;
+
+      background-image: url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      padding: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    /* لایه تیره برای readability */
+    .movie-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 0;
+    }
+
+    .movie-card * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* انیمیشن ورود کارت‌ها */
+    @keyframes slideFadeIn {
+      0% { opacity: 0; transform: translateX(-50px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    /* دکمه ویرایش */
+    .edit-button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #ff6ec7, #6ee1ff);
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .edit-button:hover {
+      transform: scale(1.1) rotate(-1deg);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .edit-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.3);
+      transform: skewX(-30deg);
+    }
+
+    .edit-button:hover::before {
+      left: 100%;
+      transition: left 0.6s ease;
+    }
+
+    /* دکمه برگشت به صفحه اصلی */
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    .pop-button {
+      animation: popIn 0.8s ease forwards;
+      background: black;
+      color: white;
+      font-weight: bold;
+      padding: 14px 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: inline-block;
+      text-decoration: none;
+      transform: scale(0);
+    }
+
+    .pop-button:hover {
+      transform: scale(1.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body class="p-6">
+  <div class="max-w-3xl mx-auto space-y-6">
+    <h2 class="text-3xl font-bold mb-6 text-center text-white animate-pulse">LIST OF MOVIES</h2>
+
+    {% for movie in movies %}
+      <div class="movie-card">
+        <h3 class="text-2xl font-semibold">{{ movie.name }}</h3>
+        <a href='{% url "movies:update-movie" movie.id %}' class="edit-button">EDIT</a>
+        <p><span class="font-bold">Genre:</span> {{ movie.genre }}</p>
+        <p><span class="font-bold">Year:</span> {{ movie.created_year }}</p>
+        <p><span class="font-bold">Director:</span> {{ movie.director }}</p>
+        <p><span class="font-bold">Rate:</span> {{ movie.rate }}</p>
+      </div>
+    {% empty %}
+      <p class="text-white text-center">No movies found.</p>
+    {% endfor %}
+
+    <div class="text-center mt-8">
+      <a href="{% url 'movies:home' %}" class="pop-button">
+        Go to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>

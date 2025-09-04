@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADD MOVIE</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    body {
+      background: linear-gradient(270deg, #ff6ec7, #ffd86e, #6ee1ff, #ff6edb);
+      background-size: 800% 800%;
+      animation: gradientBG 15s ease infinite;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position:0% 50%;}
+      50% {background-position:100% 50%;}
+      100% {background-position:0% 50%;}
+    }
+
+    .form-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      width: 100%;
+      max-width: 400px;
+      animation: popIn 0.8s ease forwards;
+      opacity: 10;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+
+    .form-card input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-card input:focus {
+      border-color: #3b82f6; /* آبی روشن */
+      box-shadow: 0 0 5px rgba(59,130,246,0.5);
+    }
+
+    /* دکمه */
+    .form-card button {
+      width: 100%;
+      background: linear-gradient(90deg, #4f93ff, #1d65ff);
+      color: white;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 0.75rem;
+      border: none;
+      margin-top: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transform: scale(0);
+      animation: popIn 0.8s ease forwards;
+    }
+
+    .form-card button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-card animate__animated animate__slideInDown">
+    <h2 class="text-2xl font-bold mb-4 text-center">ADD NEW MOVIE</h2>
+    <form class="space-y-4" method="POST" action="{% url 'movies:add-movie' %}">
+      {% csrf_token %}
+      <input name="name" type="text" placeholder="MOVIE NAME" required>
+      <input name="genre" type="text" placeholder="GENRE" required>
+      <input name="created_year" type="number" placeholder="YEAR" required>
+      <input name="director" type="text" placeholder="DIRECTOR" required>
+      <input name="rate" type="number" placeholder="RATE" step="0.1" required>
+      <button type="submit">SUBMIT</button>
+    </form>
+  </div>
+</body>
+</html>
