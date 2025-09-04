@@ -85,6 +85,10 @@
       background: linear-gradient(90deg, #10b981, #059669);
       animation-delay: 0.2s;
     }
+    .search-button {
+      background: linear-gradient(90deg, #4f93ff, #1d65ff);
+      animation-delay: 0.4s;
+    }
     .btn:hover {
       transform: translateY(-4px) scale(1.05);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
@@ -128,7 +132,7 @@
       justify-content: center;
       gap: 0.5rem;
       margin-top: 2rem;
-      opacity: 10;
+      opacity: 1;
       animation: zoomIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
       animation-delay: 0.4s;
     }
@@ -171,19 +175,64 @@
       border: none;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+    /* Modal Styles for Popup */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 80%;
+      max-width: 800px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      color: white;
+    }
+    .close {
+      color: white;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: #ccc;
+      text-decoration: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Search Box at the Top -->
+    <div class="flex justify-center mb-6">
+      <form id="searchForm" method="GET" action="{% url 'movies:search_api' %}" class="flex items-center gap-2">
+        <input type="text" name="query" placeholder="Search movies..." class="p-2 rounded-lg bg-white/10 text-black border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button type="submit" class="btn search-button"><i class="fas fa-search icon"></i> Search</button>
+      </form>
+    </div>
+
     <h2 class="text-3xl font-extrabold mb-6 text-center text-white drop-shadow-lg animate__animated animate__pulse animate__faster">LIST OF MOVIES</h2>
     {% for movie in movies %}
       <div class="movie-card mb-6">
         <h3 class="text-2xl font-semibold">{{ movie.name }}</h3>
         <div class="flex gap-4 mt-4">
-          <a href="{% url 'movies:update-movie' movie.id %}" class="btn edit-button"><i class="fas fa-edit icon"></i> EDIT</a>
+          <a href="{% url 'movies:update-movie' movie.id %}" class="btn edit-button"><i class="fas fa-edit icon"></i> Edit</a>
           <form action="{% url 'movies:delete-movie' movie.id %}" method="POST">
             {% csrf_token %}
-            <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> DELETE</button>
+            <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> Delete</button>
           </form>
         </div>
         <p><span class="font-bold">Genre:</span> {{ movie.genre }}</p>
@@ -197,19 +246,19 @@
     <div class="pagination">
       <span class="step-links flex gap-2">
         {% if page_obj.has_previous %}
-          <a href="?page=1" class="pagination-link"><i class="fas fa-angle-double-left"></i> First</a>
-          <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link"><i class="fas fa-angle-left"></i> Previous</a>
+          <a href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" class="pagination-link"><i class="fas fa-angle-double-left"></i> First</a>
+          <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" class="pagination-link"><i class="fas fa-angle-left"></i> Previous</a>
         {% endif %}
         {% for num in page_obj.paginator.page_range %}
           {% if page_obj.number == num %}
             <span class="current">{{ num }}</span>
           {% else %}
-            <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
+            <a href="?page={{ num }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" class="pagination-link">{{ num }}</a>
           {% endif %}
         {% endfor %}
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">Next <i class="fas fa-angle-right"></i></a>
-          <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Last <i class="fas fa-angle-double-right"></i></a>
+          <a href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" class="pagination-link">Next <i class="fas fa-angle-right"></i></a>
+          <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}" class="pagination-link">Last <i class="fas fa-angle-double-right"></i></a>
         {% endif %}
       </span>
     </div>
@@ -217,5 +266,80 @@
       <a href="{% url 'movies:home' %}" class="btn home-button"><i class="fas fa-home icon"></i> Go to Home</a>
     </div>
   </div>
+
+  <!-- Modal for Search Results Popup -->
+  <div id="searchModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 class="text-2xl font-bold mb-4">Search Results</h2>
+      <div id="searchResultsList"></div>
+    </div>
+  </div>
+
+  <script>
+  // JavaScript for handling search form submission and showing popup
+  document.getElementById('searchForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const query = this.query.value; // Get the search query
+    const url = this.action + '?query=' + encodeURIComponent(query); // Build the search URL
+
+    // Fetch search results via AJAX
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const resultsList = document.getElementById('searchResultsList');
+        resultsList.innerHTML = ''; // Clear previous results
+
+        if (data.movies.length > 0) {
+          data.movies.forEach(movie => {
+            // Create a movie card for each result
+            const movieCard = document.createElement('div');
+            movieCard.className = 'movie-card mb-6';
+            // Use JavaScript to construct URLs dynamically
+            const updateUrl = `/update/${movie.id}/`; // مسیر update
+            const deleteUrl = `/delete/${movie.id}/`; // مسیر delete
+            movieCard.innerHTML = `
+              <h3 class="text-2xl font-semibold">${movie.name}</h3>
+              <div class="flex gap-4 mt-4">
+                <a href="${updateUrl}" class="btn edit-button"><i class="fas fa-edit icon"></i> Edit</a>
+                <form action="${deleteUrl}" method="POST">
+                  <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('input[name=csrfmiddlewaretoken]').value || ''}">
+                  <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> Delete</button>
+                </form>
+                <p><span class="font-bold">Genre:</span> ${movie.genre}</p>
+                <p><span class="font-bold">Year:</span> ${movie.created_year}</p>
+                <p><span class="font-bold">Director:</span> ${movie.director}</p>
+                <p><span class="font-bold">Rate:</span> ${movie.rate}</p>
+              `;
+            resultsList.appendChild(movieCard);
+          });
+        } else {
+          resultsList.innerHTML = '<p class="text-white text-center font-bold">No movies found.</p>';
+        }
+
+        // Show the modal popup
+        document.getElementById('searchModal').style.display = 'block';
+      })
+      .catch(error => console.error('Error fetching search results:', error));
+  });
+
+  // Close modal when clicking on close button
+  document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('searchModal').style.display = 'none';
+  });
+
+  // Close modal when clicking outside of it
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('searchModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+</script>
+
+<form id="hiddenCsrfForm" style="display: none;">
+  {% csrf_token %}
+</form>
 </body>
 </html>
