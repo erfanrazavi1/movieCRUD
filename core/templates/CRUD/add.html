@@ -6,82 +6,131 @@
   <title>ADD MOVIE</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     body {
-      background: linear-gradient(270deg, #ff6ec7, #ffd86e, #6ee1ff, #ff6edb);
-      background-size: 800% 800%;
-      animation: gradientBG 15s ease infinite;
+      background: linear-gradient(135deg, #667eea, #764ba2, #6B8DD6, #8E37D7);
+      background-size: 400% 400%;
+      animation: gradientAnimation 12s ease infinite;
       padding: 2rem;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
-    @keyframes gradientBG {
-      0% {background-position:0% 50%;}
-      50% {background-position:100% 50%;}
-      100% {background-position:0% 50%;}
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
     }
-
     .form-card {
-      background: white;
-      padding: 2rem;
+      background: rgba(15, 15, 15, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      padding: 2.5rem;
       border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      width: 100%;
       max-width: 400px;
-      animation: popIn 0.8s ease forwards;
+      width: 100%;
       opacity: 10;
+      animation: zoomIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     }
-
-    @keyframes popIn {
-      0% { transform: scale(0); opacity: 0; }
-      60% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-
-
     .form-card input {
       width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
       outline: none;
       transition: all 0.3s ease;
+      font-size: 1rem;
     }
-
+    .form-card input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
     .form-card input:focus {
-      border-color: #3b82f6; /* آبی روشن */
-      box-shadow: 0 0 5px rgba(59,130,246,0.5);
+      border-color: #a78bfa;
+      box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+      background: rgba(255, 255, 255, 0.1);
     }
-
-    /* دکمه */
-    .form-card button {
-      width: 100%;
-      background: linear-gradient(90deg, #4f93ff, #1d65ff);
-      color: white;
+    .btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       font-weight: bold;
-      padding: 12px;
       border-radius: 0.75rem;
-      border: none;
-      margin-top: 1rem;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      transform: scale(0);
-      animation: popIn 0.8s ease forwards;
+      padding: 0.75rem 1.5rem;
+      color: white;
+      text-decoration: none;
+      opacity: 0;
+      animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     }
-
-    .form-card button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
-      transition: all 0.3s ease;
+    .submit-button {
+      background: linear-gradient(90deg, #4f93ff, #1d65ff);
+      width: 100%;
+      animation-delay: 0.4s;
+    }
+    .nav-button {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+    .btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      transition: left 0.5s ease;
+      z-index: -1;
+    }
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.3), transparent);
+      transition: bottom 0.4s ease;
+      z-index: -1;
+    }
+    .btn:hover::after {
+      bottom: 0;
+    }
+    .icon {
+      transition: transform 0.3s ease;
+    }
+    .btn:hover .icon {
+      transform: scale(1.2) rotate(10deg);
+    }
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .nav-section {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="form-card animate__animated animate__slideInDown">
-    <h2 class="text-2xl font-bold mb-4 text-center">ADD NEW MOVIE</h2>
+  <div class="form-card">
+    <h2 class="text-2xl font-extrabold mb-6 text-white drop-shadow-lg text-center">ADD NEW MOVIE</h2>
     <form class="space-y-4" method="POST" action="{% url 'movies:add-movie' %}">
       {% csrf_token %}
       <input name="name" type="text" placeholder="MOVIE NAME" required>
@@ -89,8 +138,17 @@
       <input name="created_year" type="number" placeholder="YEAR" required>
       <input name="director" type="text" placeholder="DIRECTOR" required>
       <input name="rate" type="number" placeholder="RATE" step="0.1" required>
-      <button type="submit">SUBMIT</button>
+      <button type="submit" class="btn submit-button"><i class="fas fa-paper-plane icon"></i> SUBMIT</button>
     </form>
+    <div class="nav-section">
+      <h3 class="text-xl font-bold mb-4 text-white drop-shadow-lg text-center">NAVIGATION</h3>
+      <a href="{% url 'movies:home' %}" class="btn nav-button" style="animation-delay: 0.6s;">
+        <i class="fas fa-home icon"></i> Home
+      </a>
+      <a href="{% url 'movies:list-movie' %}" class="btn nav-button" style="animation-delay: 1s;">
+        <i class="fas fa-list icon"></i> List Movies
+      </a>
+    </div>
   </div>
 </body>
 </html>

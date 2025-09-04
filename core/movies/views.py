@@ -20,6 +20,7 @@ class MovieListView(ListView):
     model = MoviesManager
     template_name = 'CRUD/list.html'
     context_object_name = 'movies' 
+    paginate_by = 1
 
 class UpdateMovieView(UpdateView):
     model = MoviesManager

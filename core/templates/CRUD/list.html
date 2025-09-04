@@ -5,144 +5,216 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SEE MOVIES</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* بک‌گراند رویایی متحرک */
     body {
-      background: linear-gradient(270deg, #ff6ec7, #ffd86e, #6ee1ff, #ff6edb);
-      background-size: 800% 800%;
-      animation: gradientBG 15s ease infinite;
+      background: linear-gradient(135deg, #667eea, #764ba2, #6B8DD6, #8E37D7);
+      background-size: 400% 400%;
+      animation: gradientAnimation 12s ease infinite;
+      padding: 2rem;
+      min-height: 100vh;
     }
-
-    @keyframes gradientBG {
-      0%{background-position:0% 50%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 50%}
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
     }
-
-    /* کارت‌ها با ورود از چپ و FadeIn */
-    @keyframes slideFadeIn {
-      0% { opacity: 0; transform: translateX(-50px); }
-      100% { opacity: 1; transform: translateX(0); }
+    .container {
+      max-width: 3xl;
+      margin: 0 auto;
+      padding: 1.5rem;
     }
-
     .movie-card {
-      animation: slideFadeIn 0.8s ease forwards;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      padding: 1.5rem;
+      border-radius: 1rem;
       opacity: 0;
+      animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     }
-
+    .movie-card:nth-child(1) { animation-delay: 0s; }
+    .movie-card:nth-child(2) { animation-delay: 0.2s; }
+    .movie-card:nth-child(3) { animation-delay: 0.4s; }
     .movie-card:hover {
-      transform: scale(1.05);
-      transition: all 0.3s ease;
-      box-shadow: 0px 10px 25px rgba(0,0,0,0.25);
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
     }
-
     .movie-card h3, .movie-card p {
-      animation: textSlide 1s ease forwards;
+      color: white;
       opacity: 0;
+      animation: textSlide 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     }
-
     .movie-card h3 { animation-delay: 0.2s; }
     .movie-card p { animation-delay: 0.4s; }
-
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
     @keyframes textSlide {
       0% { opacity: 0; transform: translateX(-20px); }
       100% { opacity: 1; transform: translateX(0); }
     }
-
-    /* دکمه پاپ و برجسته */
-    @keyframes popIn {
-      0% { transform: scale(0); opacity: 0; }
-      60% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-
-    .pop-button {
-      animation: popIn 0.8s ease forwards;
-      opacity: 10;
-      background: black; /* رنگ مشخص و برجسته */
-      color: white;
+    .btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       font-weight: bold;
-      padding: 14px 32px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      display: inline-block;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: white;
       text-decoration: none;
-      transform: scale(0);
+      opacity: 0;
+      animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     }
-
-    .pop-button:hover {
-      transform: scale(1.15);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 14px 35px rgba(0,0,0,0.5);
+    .edit-button {
+      background: linear-gradient(90deg, #4f93ff, #1d65ff);
+      animation-delay: 0.6s;
     }
-        .edit-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin-top: 10px;
-    border-radius: 8px;
-    background: linear-gradient(90deg, #ff6ec7, #6ee1ff);
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    .delete-button {
+      background: linear-gradient(90deg, #ef4444, #b91c1c);
+      animation-delay: 0.8s;
     }
-
-    /* افکت هاور */
-    .edit-button:hover {
-    transform: scale(1.1) rotate(-1deg);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    .home-button {
+      background: linear-gradient(90deg, #10b981, #059669);
+      animation-delay: 0.2s;
     }
-
-    /* افکت رقص نور */
-    .edit-button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.3);
-    transform: skewX(-30deg);
+    .btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
     }
-
-    .edit-button:hover::before {
-    left: 100%;
-    transition: left 0.6s ease;
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      transition: left 0.5s ease;
+      z-index: -1;
     }
-
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.3), transparent);
+      transition: bottom 0.4s ease;
+      z-index: -1;
+    }
+    .btn:hover::after {
+      bottom: 0;
+    }
+    .icon {
+      transition: transform 0.3s ease;
+    }
+    .btn:hover .icon {
+      transform: scale(1.2) rotate(10deg);
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      opacity: 10;
+      animation: zoomIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      animation-delay: 0.4s;
+    }
+    .pagination a, .pagination span {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      position: relative;
+      overflow: hidden;
+      min-width: 3rem;
+      text-align: center;
+    }
+    .pagination a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .pagination a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      transition: left 0.5s ease;
+      z-index: -1;
+    }
+    .pagination a:hover::before {
+      left: 100%;
+    }
+    .pagination .current {
+      background: linear-gradient(90deg, #4f93ff, #1d65ff);
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
-<body class="p-6">
-  <div class="max-w-3xl mx-auto space-y-6">
-    <h2 class="text-3xl font-bold mb-6 text-center text-white animate-pulse">LIST OF MOVIES</h2>
-
+<body>
+  <div class="container">
+    <h2 class="text-3xl font-extrabold mb-6 text-center text-white drop-shadow-lg animate__animated animate__pulse animate__faster">LIST OF MOVIES</h2>
     {% for movie in movies %}
-      <div class="bg-white p-6 rounded-xl shadow-lg transition movie-card">
-        <h3 class="text-2xl font-semibold text-gray-800">{{ movie.name }}</h3>
-        <a href='{% url "movies:update-movie" movie.id %}' class="edit-button">EDIT</a>
-            <form action="{% url 'movies:delete-movie' movie.id %}" method="POST" >  
-                {% csrf_token %}
-                <button type="submit" class="edit-button bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                DELETE
-                </button>
-            </form>
+      <div class="movie-card mb-6">
+        <h3 class="text-2xl font-semibold">{{ movie.name }}</h3>
+        <div class="flex gap-4 mt-4">
+          <a href="{% url 'movies:update-movie' movie.id %}" class="btn edit-button"><i class="fas fa-edit icon"></i> EDIT</a>
+          <form action="{% url 'movies:delete-movie' movie.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> DELETE</button>
+          </form>
+        </div>
         <p><span class="font-bold">Genre:</span> {{ movie.genre }}</p>
         <p><span class="font-bold">Year:</span> {{ movie.created_year }}</p>
         <p><span class="font-bold">Director:</span> {{ movie.director }}</p>
         <p><span class="font-bold">Rate:</span> {{ movie.rate }}</p>
       </div>
     {% empty %}
-      <p class="text-white text-center">No movies found.</p>
+      <p class="text-white text-center font-bold">No movies found.</p>
     {% endfor %}
-
+    <div class="pagination">
+      <span class="step-links flex gap-2">
+        {% if page_obj.has_previous %}
+          <a href="?page=1" class="pagination-link"><i class="fas fa-angle-double-left"></i> First</a>
+          <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link"><i class="fas fa-angle-left"></i> Previous</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="current">{{ num }}</span>
+          {% else %}
+            <a href="?page={{ num }}" class="pagination-link">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">Next <i class="fas fa-angle-right"></i></a>
+          <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">Last <i class="fas fa-angle-double-right"></i></a>
+        {% endif %}
+      </span>
+    </div>
     <div class="text-center mt-8">
-      <a href="{% url 'movies:home' %}" class="pop-button">
-        Go to Home
-      </a>
+      <a href="{% url 'movies:home' %}" class="btn home-button"><i class="fas fa-home icon"></i> Go to Home</a>
     </div>
   </div>
 </body>
