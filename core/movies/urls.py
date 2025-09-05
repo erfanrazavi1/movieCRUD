@@ -6,7 +6,7 @@ from movies.views import (
     UpdateMovieView,
     MovieDeleteView,
     SearchMovieView,
-    search_movies_api,
+    SearchMoviesAPIView,
 )
 
 app_name = 'movies'
@@ -19,7 +19,7 @@ urlpatterns = [
     path('delete/<int:pk>/', MovieDeleteView.as_view(), name="delete-movie"),
 
     path('search/', SearchMovieView.as_view(), name='search'),
-    path('search/api/', search_movies_api, name='search_api'),
+    path('search/api/', SearchMoviesAPIView.as_view(), name='search_api'),
 
 
 ]

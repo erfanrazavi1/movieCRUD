@@ -5,8 +5,6 @@ from django.db.models import Q
 from django.http import JsonResponse
 from movies.forms import MovieForm, SearchForm
 from movies.models import MoviesManager
-# Create your views here.
-
 
 class HomePageView(TemplateView):
     template_name = 'home.html'
@@ -17,12 +15,24 @@ class AddMovieView(CreateView):
     template_name = 'CRUD/add.html'
     success_url = '/'
 
-
 class MovieListView(ListView):
     model = MoviesManager
     template_name = 'CRUD/list.html'
-    context_object_name = 'movies' 
-    paginate_by = 1
+    context_object_name = 'movies'
+    paginate_by = 3
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'newest':
+            return queryset.order_by('-created_at')
+        elif sort == 'oldest':
+            return queryset.order_by('created_at')
+        elif sort == 'highest_rate':
+            return queryset.order_by('-rate')
+        elif sort == 'lowest_rate':
+            return queryset.order_by('rate')
+        return queryset.order_by('-created_at')
 
 class UpdateMovieView(UpdateView):
     model = MoviesManager
@@ -34,12 +44,9 @@ class UpdateMovieView(UpdateView):
 class MovieDeleteView(DeleteView):
     model = MoviesManager
     success_url = '/'
-    
+
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
-
-    
-    
 
 class SearchMovieView(ListView):
     model = MoviesManager
@@ -50,12 +57,18 @@ class SearchMovieView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         form = SearchForm(self.request.GET or None)
-
         if form.is_valid() and form.cleaned_data.get('query'):
             query = form.cleaned_data.get('query')
             queryset = queryset.filter(
                 Q(name__icontains=query) | Q(genre__icontains=query) | Q(director__icontains=query)
-                )
+            )
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'newest':
+            return queryset.order_by('-created_at')
+        elif sort == 'highest_rate':
+            return queryset.order_by('-rate')
+        elif sort == 'lowest_rate':
+            return queryset.order_by('rate')
         return queryset.order_by('-created_at')
 
     def get_context_data(self, **kwargs):
@@ -63,22 +76,38 @@ class SearchMovieView(ListView):
         context['form'] = SearchForm(self.request.GET or None)
         return context
 
-def search_movies_api(request):
-    query = request.GET.get('query', '')
-    movies = MoviesManager.objects.all()
-    if query:
-        movies = movies.filter(
-            Q(name__icontains=query) | Q(genre__icontains=query) | Q(director__icontains=query)
-        )
-    data = [
-        {
-            'id': movie.id,
-            'name': movie.name,
-            'genre': movie.genre,
-            'director': movie.director,
-            'created_year': movie.created_year,
-            'rate': movie.rate,
-            'created_at': movie.created_at.strftime('%Y-%m-%d')
-        } for movie in movies
-    ]
-    return JsonResponse({'movies': data})
+from django.views import View
+
+class SearchMoviesAPIView(View):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('query', '')
+        sort = request.GET.get('sort', 'newest')
+        movies = MoviesManager.objects.all()
+
+        if query:
+            movies = movies.filter(
+                Q(name__icontains=query) | Q(genre__icontains=query) | Q(director__icontains=query)
+            )
+
+        if sort == 'newest':
+            movies = movies.order_by('-created_at')
+        elif sort == 'highest_rate':
+            movies = movies.order_by('-rate')
+        elif sort == 'lowest_rate':
+            movies = movies.order_by('rate')
+        else:
+            movies = movies.order_by('-created_at')
+
+        data = [
+            {
+                'id': movie.id,
+                'name': movie.name,
+                'genre': movie.genre,
+                'director': movie.director,
+                'created_year': movie.created_year,
+                'rate': movie.rate,
+                'created_at': movie.created_at.strftime('%Y-%m-%d')
+            }
+            for movie in movies
+        ]
+        return JsonResponse({'movies': data})
