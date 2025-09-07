@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.contrib.auth.models import User
 
 class MoviesManager(models.Model):
     name = models.CharField(max_length=255)
@@ -15,6 +15,7 @@ class MoviesManager(models.Model):
             MaxValueValidator(10.0)
         ]
     )
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
 

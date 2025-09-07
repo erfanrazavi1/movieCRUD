@@ -79,6 +79,25 @@
     }
     .movie-card h3 { animation-delay: 0.2s; }
     .movie-card p { animation-delay: 0.4s; }
+    .author-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(90deg, #10b981, #059669);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      color: white;
+      font-weight: bold;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: textSlide 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      animation-delay: 0.6s;
+    }
+    .author-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
     @keyframes slideIn {
       0% { opacity: 0; transform: translateY(50px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -251,7 +270,7 @@
       <form id="sortForm" method="GET" action="{% url 'movies:list-movie' %}">
         <select name="sort" onchange="this.form.submit()" class="sort-select">
           <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
-          <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>oldest</option>
+          <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
           <option value="highest_rate" {% if request.GET.sort == 'highest_rate' %}selected{% endif %}>Highest Rated</option>
           <option value="lowest_rate" {% if request.GET.sort == 'lowest_rate' %}selected{% endif %}>Lowest Rated</option>
         </select>
@@ -276,16 +295,24 @@
         <div class="movie-card mb-6">
           <h3 class="text-2xl font-semibold">{{ movie.name }}</h3>
           <div class="flex gap-4 mt-4">
-            <a href="{% url 'movies:update-movie' movie.id %}" class="btn edit-button"><i class="fas fa-edit icon"></i> Edit</a>
-            <form action="{% url 'movies:delete-movie' movie.id %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> Delete</button>
-            </form>
+          
+            {% if user.is_authenticated and user.get_username == movie.author.username%}
+              <a href="{% url 'movies:update-movie' movie.id %}" class="btn edit-button"><i class="fas fa-edit icon"></i> Edit</a>
+              <form action="{% url 'movies:delete-movie' movie.id %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> Delete</button>
+              </form>
+            {% else %}
+              <button class="btn delete-button opacity-50 cursor-not-allowed" title="You can only delete your own movies"> 
+                You do not have access to this section.</button> 
+              
+            {% endif %}
           </div>
           <p><span class="font-bold">Genre:</span> {{ movie.genre }}</p>
           <p><span class="font-bold">Year:</span> {{ movie.created_year }}</p>
           <p><span class="font-bold">Director:</span> {{ movie.director }}</p>
           <p><span class="font-bold">Rate:</span> {{ movie.rate }}</p>
+          <p class="author-tag"><i class="fas fa-user icon"></i> Author: {{ movie.author.username }}</p>
         </div>
       {% empty %}
         <p class="text-white text-center font-bold">No movies found.</p>
@@ -352,11 +379,13 @@
                     <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('input[name=csrfmiddlewaretoken]').value || ''}">
                     <button type="submit" class="btn delete-button"><i class="fas fa-trash icon"></i> Delete</button>
                   </form>
-                  <p><span class="font-bold">Genre:</span> ${movie.genre}</p>
-                  <p><span class="font-bold">Year:</span> ${movie.created_year}</p>
-                  <p><span class="font-bold">Director:</span> ${movie.director}</p>
-                  <p><span class="font-bold">Rate:</span> ${movie.rate}</p>
-                `;
+                </div>
+                <p><span class="font-bold">Genre:</span> ${movie.genre}</p>
+                <p><span class="font-bold">Year:</span> ${movie.created_year}</p>
+                <p><span class="font-bold">Director:</span> ${movie.director}</p>
+                <p><span class="font-bold">Rate:</span> ${movie.rate}</p>
+                <p class="author-tag"><i class="fas fa-user icon"></i> Author: ${movie.author}</p>
+              `;
               resultsList.appendChild(movieCard);
             });
           } else {

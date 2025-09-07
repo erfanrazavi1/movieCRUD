@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView, CreateView, ListView, UpdateView, DeleteView
 from django.db.models import Q
 from django.http import JsonResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from movies.forms import MovieForm, SearchForm
 from movies.models import MoviesManager
 
@@ -15,6 +15,10 @@ class AddMovieView(LoginRequiredMixin, CreateView):
     form_class = MovieForm
     template_name = 'CRUD/add.html'
     success_url = '/'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 class MovieListView(ListView):
     model = MoviesManager
@@ -35,20 +39,31 @@ class MovieListView(ListView):
             return queryset.order_by('rate')
         return queryset.order_by('-created_at')
 
-class UpdateMovieView(LoginRequiredMixin, UpdateView):
+class UpdateMovieView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = MoviesManager
     form_class = MovieForm
     template_name = 'CRUD/update.html'
     context_object_name = 'movie'
     success_url = '/'
 
-class MovieDeleteView(LoginRequiredMixin, DeleteView):
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    def test_func(self):
+        movie = self.get_object()
+        return movie.author == self.request.user
+
+class MovieDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = MoviesManager
     success_url = '/'
-
+    
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 
+    def test_func(self):
+        movie = self.get_object()
+        return movie.author == self.request.user
 class SearchMovieView(ListView):
     model = MoviesManager
     template_name = 'CRUD/list.html'
