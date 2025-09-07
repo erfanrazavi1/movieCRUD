@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOME - MOVIES MANAGEMENT</title>
+  <title>REGISTER - MOVIES MANAGEMENT</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -54,7 +54,7 @@
       position: relative;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      display: flex;
+      display: center;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
@@ -108,14 +108,28 @@
       0% { opacity: 0; transform: translateY(50px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-    .nav-section {
-      margin-top: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    .input-field {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      outline: none;
+      transition: border-color 0.3s ease;
     }
-    .nav-button {
-      background: linear-gradient(90deg, #10b981, #059669);
+    .input-field:focus {
+      border-color: #4f93ff;
+    }
+    .input-field::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .error-message {
+      color: #f87171;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      text-align: left;
     }
     .user-info {
       position: absolute;
@@ -123,9 +137,7 @@
       left: 1rem;
       z-index: 2;
       color: white;
-      font-weight: bold;
-      font-size: 1rem;
-      display: flex;
+      font-weight: boldregistry
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
@@ -172,31 +184,43 @@
           <i class="fas fa-sign-out-alt icon"></i> Logout
         </button>
       </form>
-   {% else %}
+    {% else %}
       <a href="{% url 'login' %}" style="text-decoration: none;">
         <button type="button" class="btn logout-btn">
           <i class="fas fa-sign-in-alt icon"></i> Login
         </button>
       </a>
-
-      <a href="{% url 'register' %}" style="text-decoration: none;">
-        <button type="button" class="btn logout-btn">
-          <i class="fas fa-user-plus icon"></i> Sign Up
-        </button>
-      </a>
     {% endif %}
   </div>
   <div class="container">
-    <h1 class="text-4xl font-extrabold mb-8 text-white drop-shadow-lg">MOVIES MANAGEMENT</h1>
-    <div class="grid grid-cols-1 gap-4">
-      <a href="{% url 'movies:add-movie' %}" class="btn" style="background: linear-gradient(90deg, #4f93ff, #1d65ff); animation-delay: 0s;">
-        <i class="fas fa-plus icon"></i> ADD MOVIE
-      </a>
-      <a href="{% url 'movies:list-movie' %}" class="btn" style="background: linear-gradient(90deg, #22c55e, #15803d); animation-delay: 0.2s;">
-        <i class="fas fa-eye icon"></i> SEE MOVIES
-      </a>
-      <a href="{% url 'movies:list-movie' %}" class="btn" style="background: linear-gradient(90deg, #eab308, #ca8a04); animation-delay: 0.4s;">
-        <i class="fas fa-edit icon"></i> EDIT MOVIE
+    <h1 class="text-4xl font-extrabold mb-8 text-white drop-shadow-lg">REGISTER</h1>
+    {% if form.errors %}
+      <div class="error-message">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <form method="post" action="{% url 'register' %}">
+      {% csrf_token %}
+      <input type="text" name="username" class="input-field" placeholder="Username" required>
+      <input type="email" name="email" class="input-field" placeholder="Email (Optional)">
+      <input type="password" name="password1" class="input-field" placeholder="Password" required>
+      <input type="password" name="password2" class="input-field" placeholder="Confirm Password" required>
+      <button type="submit" class="btn" style="background: linear-gradient(90deg, #4f93ff, #1d65ff); animation-delay: 0s;">
+        <i class="fas fa-user-plus icon"></i> REGISTER
+      </button>
+    </form>
+    <div class="mt-4">
+      <a href="{% url 'movies:home' %}" style="text-decoration: none;">
+        <button type="button" class="btn logout-btn">
+          <i class="fas fa-sign-in-alt icon"></i> Go to Home
+        </button>
       </a>
     </div>
   </div>
