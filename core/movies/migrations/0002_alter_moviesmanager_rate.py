@@ -5,15 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('movies', '0001_initial'),
+        ("movies", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='moviesmanager',
-            name='rate',
-            field=models.DecimalField(decimal_places=1, max_digits=3, validators=[django.core.validators.MinValueValidator(1.0), django.core.validators.MaxValueValidator(10.0)]),
+            model_name="moviesmanager",
+            name="rate",
+            field=models.DecimalField(
+                decimal_places=1,
+                max_digits=3,
+                validators=[
+                    django.core.validators.MinValueValidator(1.0),
+                    django.core.validators.MaxValueValidator(10.0),
+                ],
+            ),
         ),
     ]

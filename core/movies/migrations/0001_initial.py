@@ -5,22 +5,38 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='MoviesManager',
+            name="MoviesManager",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('genre', models.CharField(max_length=255)),
-                ('created_year', models.IntegerField()),
-                ('director', models.CharField(max_length=255)),
-                ('rate', models.DecimalField(decimal_places=1, max_digits=1, validators=[django.core.validators.MinValueValidator(1.0), django.core.validators.MaxValueValidator(10.0)])),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("genre", models.CharField(max_length=255)),
+                ("created_year", models.IntegerField()),
+                ("director", models.CharField(max_length=255)),
+                (
+                    "rate",
+                    models.DecimalField(
+                        decimal_places=1,
+                        max_digits=1,
+                        validators=[
+                            django.core.validators.MinValueValidator(1.0),
+                            django.core.validators.MaxValueValidator(10.0),
+                        ],
+                    ),
+                ),
             ],
         ),
     ]
